@@ -1,4 +1,4 @@
-export const typeDefs = `
+export const typeDefs = `#graphql
 type Post {
     _id: ID
     title: String
@@ -12,6 +12,6 @@ type Mutation {
 }
 
 type Query {
-    getPosts: [Post]
+    posts: [Post]
 }
 `
