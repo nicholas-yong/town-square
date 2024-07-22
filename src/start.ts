@@ -2,8 +2,8 @@ import express from "express";
 import http from 'http';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import pino from 'pino';
 import path from 'path';
+import pino, { Logger } from 'pino';
 import cors from 'cors';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
 import { makeExecutableSchema } from '@graphql-tools/schema';
@@ -14,12 +14,11 @@ import { typeDefs } from './schema/typedefs.js';
 import { resolvers } from './resolvers/resolvers.js';
 import { expressMiddleware } from '@apollo/server/express4';
 
-const PORT = 4000;
-
-interface Context {
-    token?: string;
+type ApolloServerContext = {
+  logger: Logger;
 }
 
+const PORT = 4000;
 
 dotenv.config({
   path: '../.env'
@@ -28,14 +27,13 @@ dotenv.config({
 const { FRONTEND_ORIGIN ='', MONGO_URL = '' } = process.env
 
 const app = express()
-const logger = pino();
+const logger = pino()
 
 app.use((req) => {
   req.logger = logger;
 })
 
 app.use(express.static("public"));
-app.use(express.json());
 
 try {
   await mongoose.connect(MONGO_URL);
@@ -46,7 +44,7 @@ catch(error) {
 
 
 app.get("/", (_, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.sendFile(path.join(process.cwd(), "index.html"));
 });
 
 const schema = makeExecutableSchema({
@@ -64,7 +62,7 @@ const wsServer = new WebSocketServer({
 });
 
 const serverCleanup = useServer({ schema }, wsServer);
-const server = new ApolloServer<Context>({
+const server = new ApolloServer<ApolloServerContext>({
     schema,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer }), 
       {
@@ -80,7 +78,11 @@ const server = new ApolloServer<Context>({
   });
 
 await server.start()
-app.use('/api/graphql', cors<cors.CorsRequest>(), expressMiddleware(server));
+app.use('/api/graphql', cors<cors.CorsRequest>(), express.json(), expressMiddleware(server, {
+  context: async ({ req }) => ({
+    logger: req.logger || {} as Logger,
+  }),
+}));
 
 httpServer.listen(PORT, () => {
   console.log(`🚀 Query endpoint ready at http://localhost:${PORT}/api/graphql`);

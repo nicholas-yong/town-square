@@ -14,4 +14,8 @@ type Mutation {
 type Query {
     posts: [Post]
 }
+
+type Subscription {
+  postCreated: Post
+}
 `
