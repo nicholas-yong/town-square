@@ -18,4 +18,4 @@ type Query {
 type Subscription {
   postCreated: Post
 }
-`
+`;

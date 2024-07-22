@@ -22,6 +22,7 @@
     "mongoose": "^8.5.1",
     "nodemon": "^3.1.4",
     "pino": "^9.3.1",
+    "prettier": "^3.3.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "^5.5.3",
@@ -34,7 +35,9 @@
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "prettier": "./node_modules/.bin/prettier --write '**/*'",
+    "prettier:check": "./node_modules/.bin/prettier --check '**/*'"
   },
   "eslintConfig": {
     "extends": [

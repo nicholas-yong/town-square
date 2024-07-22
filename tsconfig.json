@@ -1,17 +1,16 @@
 {
-    "compilerOptions": 
-    {
-        "lib": ["es2020"],
-        "target": "es2020",
-        "module": "esnext",
-        "moduleResolution": "node",
-        "allowJs": true,
-        "jsx": "react",
-        "strict": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "outDir": "./dist",
-        "esModuleInterop": true,
-    },
-    "include": ["./src/", "./types.d.ts"],
+  "compilerOptions": {
+    "lib": ["es2020"],
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "allowJs": true,
+    "jsx": "react",
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "esModuleInterop": true
+  },
+  "include": ["./src/**.ts", "./types.d.ts"]
 }
