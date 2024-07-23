@@ -4,9 +4,8 @@
   "type": "module",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.10.8",
     "@apollo/server": "^4.10.4",
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.5",
     "@graphql-tools/schema": "^10.0.4",
     "@mui/material": "^5.16.4",
     "@testing-library/jest-dom": "^5.17.0",
@@ -30,10 +29,11 @@
     "vite-plugin-svgr": "^4.2.0",
     "vite-tsconfig-paths": "^4.3.2",
     "web-vitals": "^2.1.4",
+    "winston": "^3.13.1",
     "ws": "^8.18.0"
   },
   "scripts": {
-    "start": "vite",
+    "start": "npx tsx start",
     "build": "tsc && vite build",
     "serve": "vite preview",
     "prettier": "./node_modules/.bin/prettier --write '**/*'",
