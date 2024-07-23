@@ -7,8 +7,9 @@ type Post {
 }
 
 type Mutation {
-    createPost(title: String!, content: String): Post
+    createPost(title: String!, content: String, order: Int): Post
     deletePost(id: ID): Boolean
+    updatePostOrder(id: ID, newOrder: Int): Boolean
 }
 
 type Query {

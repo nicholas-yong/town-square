@@ -1,4 +1,4 @@
-import { Logger } from 'pino';
+import { Logger, P } from 'pino';
 import { PubSub } from 'graphql-subscriptions';
 import { PostModel, CountersModel } from '../models.js';
 
@@ -11,9 +11,9 @@ export const resolvers = {
     },
   },
   Mutation: {
-    createPost: async (_, { title, content }: { title: string; content: string }, { logger }: { logger: Logger }) =>
-      createPost(logger, title, content),
+    createPost: async (_, { title, content }: { title: string; content: string }, { logger }: { logger: Logger }) => createPost(logger, title, content),
     deletePost: async (_, { id }: { id: string }, { logger }: { logger: Logger }) => deletePost(logger, id),
+    updatePostOrder: async(_, { id, newOrder}: { id: string, newOrder: number}, { logger }: { logger: Logger }) => updatePostOrder(logger, id, newOrder)
   },
   Subscription: {
     postCreated: {
@@ -22,6 +22,26 @@ export const resolvers = {
   },
 };
 
+export const updatePostOrder = async (logger: Logger, id: string, newOrder: number) => {
+  try {
+    logger.debug('Updating post order', {
+      id,
+      newOrder
+    })
+
+    await PostModel.updateOne({
+      _id: id,
+    }, {
+      $set: {
+        order: newOrder
+      }
+    })
+  }
+  catch(error) {
+    logger.error('Error in createPost', { error: error.toString() });
+  }
+}
+
 export const createPost = async (logger: Logger, title: string, content: string) => {
   try {
     logger.debug('Creating post', {
@@ -29,22 +49,18 @@ export const createPost = async (logger: Logger, title: string, content: string)
       content,
     });
 
-    // Increment count
-    const order = await CountersModel.findByIdAndUpdate(
-      {
-        _id: 'userId',
-      },
-      {
-        $inc: {
-          seq: 1,
-        },
-      },
-    );
+    // Get the current highest order
+    const orderResult = await PostModel.find({}).sort({
+      order: 'desc'
+    }).limit(1);
+
+
+    const currentOrder = (orderResult[0]?.order|| -1 ) + 1;
 
     const publishPost = await PostModel.create({
       title,
       content,
-      order,
+      order: currentOrder,
     });
 
     pubsub.publish('POST_CREATED', {
@@ -53,7 +69,7 @@ export const createPost = async (logger: Logger, title: string, content: string)
 
     return publishPost;
   } catch (error) {
-    logger.error('Error in createPost', { error });
+    logger.error('Error in createPost', { error: error.toString() });
   }
 };
 
