@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["es2020"],
+    "lib": ["es2020", "DOM"],
     "target": "es2020",
     "module": "esnext",
     "moduleResolution": "node",
@@ -9,8 +9,13 @@
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
+    "outDir": "dist",
     "esModuleInterop": true
   },
-  "include": ["./src/**.ts", "./types.d.ts"]
+  "include": [
+    "./frontend/src/**.tsx", 
+    "./frontend/src/**.ts", 
+    "./backend/**.ts", 
+    "./types.d.ts"
+  ]
 }
